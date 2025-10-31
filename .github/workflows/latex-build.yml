@@ -1,4 +1,4 @@
-name: Compile changed LaTeX files individually
+name: Compile and commit PDFs next to .tex files
 
 on:
   push:
@@ -8,16 +8,18 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # serve per poter fare commit e push
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Get list of changed .tex files
+      - name: Get changed .tex files
         id: changed
         run: |
-          # Recupera solo i file .tex modificati nell'ultimo push
           git fetch origin ${{ github.ref_name }} --depth=2 || true
           CHANGED=$(git diff --name-only HEAD~1 HEAD | grep '\.tex$' || true)
           echo "changed_files=$CHANGED" >> $GITHUB_ENV
@@ -28,7 +30,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y latexmk texlive-full
 
-      - name: Compile each changed .tex file to PDF
+      - name: Compile changed .tex files to PDFs
         if: env.changed_files != ''
         run: |
           for f in $changed_files; do
@@ -39,9 +41,11 @@ jobs:
             echo "Creato $dir/$base.pdf"
           done
 
-      - name: Upload compiled PDFs
+      - name: Commit and push generated PDFs
         if: env.changed_files != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: compiled-pdfs
-          path: '**/*.pdf'
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "actions@github.com"
+          git add '**/*.pdf'
+          git commit -m "Auto-compile LaTeX → PDF [skip ci]" || echo "Nessun PDF nuovo da committare"
+          git push origin HEAD:${{ github.ref_name }}
