@@ -47,10 +47,16 @@ jobs:
           done
 
       - name: Commit and push generated PDFs
-        if: env.changed_files != ''
         run: |
           git config user.name "GitHub Action"
           git config user.email "actions@github.com"
-          git add '**/*.pdf'
+          PDFs=$(find . -type f -name "*.pdf")
+          if [ -z "$PDFs" ]; then
+            echo "❌ Nessun PDF trovato da aggiungere."
+            exit 0
+          fi
+          echo "✅ Aggiungo i seguenti PDF:"
+          echo "$PDFs"
+          git add $PDFs
           git commit -m "Auto-compile LaTeX → PDF [skip ci]" || echo "Nessun PDF nuovo da committare"
           git push origin HEAD:${{ github.ref_name }}
