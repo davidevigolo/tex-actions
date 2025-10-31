@@ -1,26 +1,47 @@
-name: Compile LaTeX to PDF
+name: Compile changed LaTeX files individually
 
 on:
-  workflow_dispatch: {}
+  push:
+    paths:
+      - '**.tex'
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up LaTeX
-        uses: xu-cheng/latex-action@v3
-        with:
-          root_file: |
-            main.tex  # sostituisci con il tuo file principale o lista di file
-          latexmk_use_xelatex: true  # o false, dipende dal tuo setup
+      - name: Get list of changed .tex files
+        id: changed
+        run: |
+          # Recupera solo i file .tex modificati nell'ultimo push
+          git fetch origin ${{ github.ref_name }} --depth=2 || true
+          CHANGED=$(git diff --name-only HEAD~1 HEAD | grep '\.tex$' || true)
+          echo "changed_files=$CHANGED" >> $GITHUB_ENV
+          echo "File modificati: $CHANGED"
 
-      # (opzionale) salva i PDF come artefatti scaricabili
-      - name: Upload compiled PDF
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y latexmk texlive-full
+
+      - name: Compile each changed .tex file to PDF
+        if: env.changed_files != ''
+        run: |
+          for f in $changed_files; do
+            echo "Compilando $f..."
+            dir=$(dirname "$f")
+            base=$(basename "$f" .tex)
+            latexmk -pdf -interaction=nonstopmode -halt-on-error -output-directory="$dir" "$f" || echo "Errore nella compilazione di $f"
+            echo "Creato $dir/$base.pdf"
+          done
+
+      - name: Upload compiled PDFs
+        if: env.changed_files != ''
         uses: actions/upload-artifact@v4
         with:
           name: compiled-pdfs
-          path: '*.pdf'
+          path: '**/*.pdf'
