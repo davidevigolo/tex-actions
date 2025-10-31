@@ -17,13 +17,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug: mostra PDF trovati
+        run: find . -name '*.pdf'
+
       - name: Get changed .tex files
         id: changed
         run: |
-          git fetch origin ${{ github.ref_name }} --depth=2 || true
-          CHANGED=$(git diff --name-only HEAD~1 HEAD | grep '\.tex$' || true)
+          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.tex$' || true)
           echo "changed_files=$CHANGED" >> $GITHUB_ENV
           echo "File modificati: $CHANGED"
+
+      # - name: Get changed .tex files
+      #   id: changed
+      #   run: |
+      #     git fetch origin ${{ github.ref_name }} --depth=2 || true
+      #     CHANGED=$(git diff --name-only HEAD~1 HEAD | grep '\.tex$' || true)
+      #     echo "changed_files=$CHANGED" >> $GITHUB_ENV
+      #     echo "File modificati: $CHANGED"
 
       - name: Compile changed .tex files to PDFs
         if: env.changed_files != ''
