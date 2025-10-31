@@ -1,0 +1,26 @@
+name: Compile LaTeX to PDF
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: |
+            main.tex  # sostituisci con il tuo file principale o lista di file
+          latexmk_use_xelatex: true  # o false, dipende dal tuo setup
+
+      # (opzionale) salva i PDF come artefatti scaricabili
+      - name: Upload compiled PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-pdfs
+          path: '*.pdf'
