@@ -1,0 +1,13 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\contentsline {section}{\numberline {1}Introduzione}{2}{section.1}%
+\contentsline {section}{\numberline {2}Analisi del Capitolato scelto - C3 DIPReader}{2}{section.2}%
+\contentsline {section}{\numberline {3}Analisi degli Altri Capitolati}{4}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Capitolato C1 - Automated EN18031 Compliance Verification}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Capitolato C2 - Code Guardian}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Capitolato C4 - L'app che Protegge e Trasforma}{7}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Capitolato C5 - NEXUM}{9}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Capitolato C6 - Second Brain}{10}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Capitolato C7 - Sistema di acquisizione dati da sensori}{12}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Capitolato C8 - SmartOrder}{14}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.8}Capitolato C9 – View4Life}{16}{subsection.3.8}%
